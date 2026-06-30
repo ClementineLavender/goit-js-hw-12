@@ -1,11 +1,14 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const gallery = document.querySelector('.gallery');
-export const loadBtn = document.querySelector('.gallery-btn');
+const galleryContainer = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
+const loadMoreBtn = document.querySelector('.load-more-btn');
 
-let lightBox = null;
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 export function createGallery(images) {
   const markup = images
@@ -18,61 +21,43 @@ export function createGallery(images) {
         views,
         comments,
         downloads,
-      }) => {
-        return `
-            <li class="list-item shadow-drop-center">
-                <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" /></a>
-                <div class="list-content">
-                    <div>
-                        <h2 class="likes">Likes</h2>
-                        <p class="count-likes">${likes}</p>
-                    </div>
-                    <div>
-                        <h2 class="views">Views</h2>
-                        <p class="count-views">${views}</p>
-                    </div>
-                    <div>
-                        <h2 class="comments">Comments</h2>
-                        <p class="count-comments">${comments}</p>
-                    </div>
-                    <div>
-                        <h2 class="downloads">Downloads</h2>
-                        <p class="count-downloads">${downloads}</p>
-                    </div>
-                </div>
-            </li>
-        `;
-      }
+      }) => `
+    <li class="gallery-item">
+      <a class="gallery-link" href="${largeImageURL}">
+        <img class="gallery-image" src="${webformatURL}" alt="${tags}" />
+      </a>
+      <div class="info">
+        <p class="info-item"><b>Likes</b><br/>${likes}</p>
+        <p class="info-item"><b>Views</b><br/>${views}</p>
+        <p class="info-item"><b>Comments</b><br/>${comments}</p>
+        <p class="info-item"><b>Downloads</b><br/>${downloads}</p>
+      </div>
+    </li>
+  `
     )
     .join('');
 
-  gallery.insertAdjacentHTML('beforeend', markup);
+  // Важливо: використовуємо insertAdjacentHTML, щоб додавати нові сторінки до старих
+  galleryContainer.insertAdjacentHTML('beforeend', markup);
+  lightbox.refresh();
+}
 
-  if (lightBox) {
-    lightBox.refresh();
-  } else {
-    lightBox = new SimpleLightbox('.gallery a', {
-      captions: true,
-      captionsData: 'alt',
-      captionDelay: 250,
-    });
-  }
-}
 export function clearGallery() {
-  gallery.innerHTML = '';
+  galleryContainer.innerHTML = '';
 }
+
 export function showLoader() {
   loader.classList.remove('is-hidden');
 }
+
 export function hideLoader() {
   loader.classList.add('is-hidden');
 }
 
 export function showLoadMoreButton() {
-  loadBtn.classList.remove('is-hidden');
-  // return;
+  if (loadMoreBtn) loadMoreBtn.classList.remove('is-hidden');
 }
+
 export function hideLoadMoreButton() {
-  loadBtn.classList.add('is-hidden');
-  // return;
+  if (loadMoreBtn) loadMoreBtn.classList.add('is-hidden');
 }
