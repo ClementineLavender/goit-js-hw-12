@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home work 11</title>
+    <title>Home work 12</title>
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
@@ -15,13 +15,17 @@
             type="text"
             name="search-text"
             placeholder="Search images..."
-            required
           />
         </label>
+        <!-- Кнопка 'search' -->
         <button type="submit">Search</button>
       </form>
-      <span class="loader is-hidden"></span>
       <ul class="gallery"></ul>
+      <p class="output-total"></p>
+      <span class="loader is-hidden"></span>
+      <!-- Кнопка 'load more' -->
+      <button class="gallery-btn is-hidden" type="button">Load more</button>
+      <button id="scrollToTop" class="scroll-top-btn" type="button">↑</button>
     </main>
     <script type="module" src="./main.js"></script>
   </body>
