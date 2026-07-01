@@ -12,7 +12,7 @@ import {
 } from './js/render-functions.js';
 
 const searchForm = document.querySelector('.form');
-const loadMoreBtn = document.querySelector('.load-more-btn');
+const loadMoreBtn = document.querySelector('.gallery-btn');
 
 let searchQuery = '';
 let page = 1;
@@ -23,9 +23,9 @@ if (searchForm) {
     event.preventDefault();
 
     const form = event.currentTarget;
-    searchQuery = form.elements['search-text'].value.trim();
+    const queryInputValue = form.elements['search-text'].value.trim();
 
-    if (searchQuery === '') {
+    if (queryInputValue === '') {
       iziToast.warning({
         title: 'Warning',
         message: 'Please enter a search query!',
@@ -33,8 +33,9 @@ if (searchForm) {
       return;
     }
 
-    // Скидання перед новим пошуком
+    searchQuery = queryInputValue;
     page = 1;
+
     clearGallery();
     hideLoadMoreButton();
     showLoader();
@@ -51,9 +52,13 @@ if (searchForm) {
 
       createGallery(data.hits);
 
-      // Перевірка: чи є що завантажувати далі
       if (data.totalHits > perPage) {
         showLoadMoreButton();
+      } else {
+        hideLoadMoreButton();
+        iziToast.info({
+          message: "We're sorry, but you've reached the end of search results.",
+        });
       }
     } catch (error) {
       console.error(error);
@@ -65,7 +70,6 @@ if (searchForm) {
   });
 }
 
-// Обробник для кнопки Load more
 if (loadMoreBtn) {
   loadMoreBtn.addEventListener('click', async () => {
     page += 1;
@@ -76,8 +80,7 @@ if (loadMoreBtn) {
       const data = await getImagesByQuery(searchQuery, page);
       createGallery(data.hits);
 
-      // Реалізація плавного скролу на 2 висоти картки
-      const galleryItem = document.querySelector('.gallery-item');
+      const galleryItem = document.querySelector('.list-item');
       if (galleryItem) {
         const { height } = galleryItem.getBoundingClientRect();
         window.scrollBy({
@@ -86,7 +89,6 @@ if (loadMoreBtn) {
         });
       }
 
-      // Перевіряємо, чи досягли ми кінця колекції
       const totalPages = Math.ceil(data.totalHits / perPage);
       if (page >= totalPages) {
         hideLoadMoreButton();
