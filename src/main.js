@@ -14,9 +14,11 @@ import {
 const searchForm = document.querySelector('.form');
 const loadMoreBtn = document.querySelector('.gallery-btn');
 
-let searchQuery = '';
-let page = 1;
-const perPage = 15;
+const state = {
+  searchQuery: '',
+  page: 1,
+  perPage: 15,
+};
 
 if (searchForm) {
   searchForm.addEventListener('submit', async event => {
@@ -33,15 +35,15 @@ if (searchForm) {
       return;
     }
 
-    searchQuery = queryInputValue;
-    page = 1;
+    state.searchQuery = queryInputValue;
+    state.page = 1;
 
     clearGallery();
     hideLoadMoreButton();
     showLoader();
 
     try {
-      const data = await getImagesByQuery(searchQuery, page);
+      const data = await getImagesByQuery(state.searchQuery, state.page);
 
       if (data.hits.length === 0) {
         iziToast.error({
@@ -52,7 +54,7 @@ if (searchForm) {
 
       createGallery(data.hits);
 
-      if (data.totalHits > perPage) {
+      if (data.totalHits > state.perPage) {
         showLoadMoreButton();
       } else {
         hideLoadMoreButton();
@@ -72,12 +74,12 @@ if (searchForm) {
 
 if (loadMoreBtn) {
   loadMoreBtn.addEventListener('click', async () => {
-    page += 1;
+    state.page += 1;
     hideLoadMoreButton();
     showLoader();
 
     try {
-      const data = await getImagesByQuery(searchQuery, page);
+      const data = await getImagesByQuery(state.searchQuery, state.page);
       createGallery(data.hits);
 
       const galleryItem = document.querySelector('.list-item');
@@ -89,8 +91,8 @@ if (loadMoreBtn) {
         });
       }
 
-      const totalPages = Math.ceil(data.totalHits / perPage);
-      if (page >= totalPages) {
+      const totalPages = Math.ceil(data.totalHits / state.perPage);
+      if (state.page >= totalPages) {
         hideLoadMoreButton();
         iziToast.info({
           message: "We're sorry, but you've reached the end of search results.",
